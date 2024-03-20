@@ -26,7 +26,8 @@ FROM [dbo].[Investments] AS [i]
     LEFT JOIN [dbo].[Transactions] AS [t]
         ON [t].[InvestmentId] = [i].[Id]
 GROUP BY [i].[Id],
-         [i].[Title]";
+         [i].[Title]
+ORDER BY [i].[Title]";
 
         using SqlConnection connection = new(connectionString);
 
@@ -110,8 +111,8 @@ SELECT [Id],
        CAST([Months] * [Amount] * 0.015 AS INT) AS Interest150,
        CAST([Months] * [Amount] * 0.0125 AS INT) AS Interest125,
        CAST([Months] * [Amount] * 0.01 AS INT) AS Interest100
-FROM [cte]"
-        ;
+FROM [cte]
+ORDER BY [TransactionDate]";
 
         using SqlConnection connection = new(connectionString);
 
