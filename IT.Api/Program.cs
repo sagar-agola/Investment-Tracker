@@ -26,6 +26,12 @@ public class Program
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
+
+            options.AddPolicy($"ProductionCorsPolicy", builder => builder
+                .WithOrigins("http://investments-tracker.com", "https://investments-tracker.com")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
         });
 
         WebApplication app = builder.Build();
