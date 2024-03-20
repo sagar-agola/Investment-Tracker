@@ -1,0 +1,14 @@
+services:
+    sqlserver:
+        container_name: investment_tracker_mssql
+        image: mcr.microsoft.com/mssql/server
+        environment:
+            - ACCEPT_EULA=Y
+            - SA_PASSWORD=Delta123$
+            - MSSQL_PID=Express
+        ports:
+            - '14331:1433'
+        volumes:
+            - investment_tracker_mssql_data:/var/opt/mssql
+volumes:
+    investment_tracker_mssql_data:
