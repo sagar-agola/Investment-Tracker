@@ -2,15 +2,14 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["IT.Api/IT.Api.csproj", "IT.Api/"]
-RUN dotnet restore "./IT.Api/IT.Api.csproj"
+COPY ["./IT.Api.csproj", "."]
+RUN dotnet restore "IT.Api.csproj"
 COPY . .
-WORKDIR "/src/IT.Api"
+WORKDIR "/src"
 RUN dotnet build "./IT.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

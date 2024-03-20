@@ -1,14 +1,40 @@
 services:
-    sqlserver:
-        container_name: investment_tracker_mssql
+    investment_tracker_database:
+        container_name: investment_tracker_databse
         image: mcr.microsoft.com/mssql/server
         environment:
             - ACCEPT_EULA=Y
             - SA_PASSWORD=Delta123$
             - MSSQL_PID=Express
         ports:
-            - '14331:1433'
+            - 14331:1433
         volumes:
             - investment_tracker_mssql_data:/var/opt/mssql
+        networks:
+            - investment_tracker_network
+    investment_tracker_api:
+        container_name: investment_tracker_api
+        build:
+            context: ./IT.Api
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+        ports:
+            - 8080:8080
+        networks:
+            - investment_tracker_network
+        depends_on:
+            - investment_tracker_database
+    investment_tracker_web:
+        container_name: investment_tracker_web
+        build:
+            context: ./IT.Web
+        ports:
+            - 80:80
+        networks:
+            - investment_tracker_network
+        depends_on:
+            - investment_tracker_api
+networks:
+    investment_tracker_network:
 volumes:
     investment_tracker_mssql_data:
