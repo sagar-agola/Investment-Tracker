@@ -18,6 +18,10 @@ body {
   color: #fff;
   text-align: center;
   height: $navbar-height;
+
+  h1 {
+    margin-bottom: 0;
+  }
 }
 
 .container {

@@ -53,18 +53,26 @@ export class AppComponent implements OnInit {
   }
 
   getInvestments(autoSelect: boolean = true): void {
+    this.investments = [];
     this._http.get<InvestmentGridModel[]>(`${environment.apiUrl}/investments`).subscribe({
       next: (response) => {
         this.investments = response.map(item => {
           return {
             ...item,
-            totalInvestments: this._currencyPipe.transform(item.totalInvestments, 'USD', 'symbol', '1.0-2')
+            totalInvestments: this._currencyPipe.transform(item.totalInvestments, 'INR', 'symbol', '1.0-2')
           }
         });
 
-        if (autoSelect && this.investments.length > 0) {
-          this.selectedInvestmentId = this.investments[0].id;
-          this.getTransactions();
+        if (autoSelect) {
+          if (this.investments.length > 0) {
+            this.selectedInvestmentId = this.investments[0].id;
+            this.getTransactions();
+          }
+          else {
+            this.selectedInvestmentId = 0;
+            this.transactions = [];
+            this._cdr.detectChanges();
+          }
         }
         else {
           this._cdr.detectChanges();
@@ -74,16 +82,17 @@ export class AppComponent implements OnInit {
   }
 
   getTransactions(): void {
+    this.transactions = [];
     this._http.get<TransactionGridModel[]>(`${environment.apiUrl}/investments/${this.selectedInvestmentId}/transactions`).subscribe({
       next: (response) => {
         this.transactions = response.map(item => {
           return {
             id: item.id,
-            transactionDate: this._datePipe.transform(item.transactionDate),
-            amount: this._currencyPipe.transform(item.amount, 'USD', 'symbol', '1.0-2'),
-            interest150: this._currencyPipe.transform(item.interest150, 'USD', 'symbol', '1.0-2'),
-            interest125: this._currencyPipe.transform(item.interest125, 'USD', 'symbol', '1.0-2'),
-            interest100: this._currencyPipe.transform(item.interest100, 'USD', 'symbol', '1.0-2'),
+            transactionDate: this._datePipe.transform(item.transactionDate, "dd MMMM, yyyy"),
+            amount: this._currencyPipe.transform(item.amount, 'INR', 'symbol', '1.0-2'),
+            interest150: this._currencyPipe.transform(item.interest150, 'INR', 'symbol', '1.0-2'),
+            interest125: this._currencyPipe.transform(item.interest125, 'INR', 'symbol', '1.0-2'),
+            interest100: this._currencyPipe.transform(item.interest100, 'INR', 'symbol', '1.0-2'),
           }
         });
 
@@ -103,7 +112,7 @@ export class AppComponent implements OnInit {
     this._http.post<void>(`${environment.apiUrl}/investments`, this.investmentModel).subscribe({
       next: () => {
         this._modalService.dismissAll();
-        this.getInvestments(false);
+        this.getInvestments(this.selectedInvestmentId == 0);
       },
       error: (errorResponse: HttpErrorResponse) => {
         this._toastr.error(errorResponse.error.title);
@@ -129,6 +138,11 @@ export class AppComponent implements OnInit {
   }
 
   openCreateTransactionPopup(modalContent: TemplateRef<any>): void {
+    if (this.selectedInvestmentId == 0) {
+      this._toastr.warning("Please Create Investment First.");
+      return;
+    }
+
     this.transactionModel = {
       amount: 0,
       transactionDate: new Date()

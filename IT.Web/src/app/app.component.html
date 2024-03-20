@@ -53,9 +53,8 @@
           <table>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Amount</th>
                 <th>Transaction Date</th>
+                <th>Amount</th>
                 <th>Interest 1.5%</th>
                 <th>Interest 1.25%</th>
                 <th>Interest 1%</th>
@@ -63,10 +62,9 @@
             </thead>
             <tbody>
               <ng-container *ngIf="transactions.length > 0; else NoDataTemplate">
-                <tr *ngFor="let transaction of transactions; let i = index">
-                  <td>{{ i + 1 }}</td>
-                  <td>{{ transaction.amount }}</td>
+                <tr *ngFor="let transaction of transactions">
                   <td>{{ transaction.transactionDate }}</td>
+                  <td>{{ transaction.amount }}</td>
                   <td>{{ transaction.interest150 }}</td>
                   <td>{{ transaction.interest125 }}</td>
                   <td>{{ transaction.interest100 }}</td>
