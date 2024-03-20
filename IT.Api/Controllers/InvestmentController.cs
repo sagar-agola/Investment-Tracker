@@ -124,7 +124,7 @@ ORDER BY [TransactionDate]";
     }
 
     [HttpPost("api/investments/{investmentId:int}/transactions")]
-    public async Task<IActionResult> AddTransaction([FromRoute] int investmentId, [FromQuery] int amount, [FromQuery] DateTime transactionDate)
+    public async Task<IActionResult> AddTransaction([FromRoute] int investmentId, [FromBody] TransactionCreateUpdateModel model)
     {
         string connectionString = databaseHelpers.GetDefaultConnection();
         string query = "INSERT INTO [dbo].[Transactions] ([Amount], [CreatedAt], [InvestmentId]) VALUES (@amount, @transactionDate, @investmentId)";
@@ -132,7 +132,7 @@ ORDER BY [TransactionDate]";
         using SqlConnection connection = new(connectionString);
 
         await connection.OpenAsync();
-        await connection.ExecuteAsync(query, new { amount, transactionDate, investmentId });
+        await connection.ExecuteAsync(query, new { model.Amount, model.TransactionDate, investmentId });
 
         return Ok();
     }

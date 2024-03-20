@@ -46,7 +46,9 @@
         <div class="section">
           <div class="section-header">
             <h2>Transactions</h2>
-            <button class="add-btn"><i class="fas fa-plus"></i> Add New Transaction</button>
+            <button class="add-btn" (click)="openCreateTransactionPopup(TransactionCreateModal)">
+              <i class="fas fa-plus"></i> Add New Transaction
+            </button>
           </div>
           <table>
             <thead>
@@ -123,3 +125,26 @@
   </div>
 </ng-template>
 
+<ng-template #TransactionCreateModal let-modal>
+  <div class="modal-header">
+    <div class="modal-title">Add New Transaction</div>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="title" class="mb-2">Amount</label>
+      <input type="number" name="amount" id="amount" [(ngModel)]="transactionModel.amount" class="form-control" />
+    </div>
+    <div class="mb-3">
+      <label for="transactionDate" class="mb-2">Transaction Date</label>
+      <input type="date" name="transactionDate" id="transactionDate" [(ngModel)]="transactionModel.transactionDate" class="form-control" />
+    </div>
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-success me-1" (click)="saveTransaction()">
+        <i class="fa fa-save me-2"></i> Save
+      </button>
+      <button class="btn btn-secondary ms-1" ngbAutofocus (click)="modal.close()">
+        <i class="fa fa-ban me-2"></i> Cancel
+      </button>
+    </div>
+  </div>
+</ng-template>

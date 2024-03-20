@@ -8,6 +8,7 @@ import { NgbModal, NgbModalModule, NgbToastModule } from '@ng-bootstrap/ng-boots
 import { InvestmentCreateUpdateModel } from './models/investment-create-update-model';
 import { FormsModule } from '@angular/forms';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { TransactionCreateUpdateModel } from './models/transaction-create-update-model';
 
 @Component({
   selector: 'app-root',
@@ -32,6 +33,10 @@ export class AppComponent implements OnInit {
   transactions: TransactionGridUiModel[] = [];
   investmentModel: InvestmentCreateUpdateModel = {
     title: ""
+  };
+  transactionModel: TransactionCreateUpdateModel = {
+    amount: 0,
+    transactionDate: new Date()
   };
 
   constructor(
@@ -117,7 +122,29 @@ export class AppComponent implements OnInit {
         this._modalService.dismissAll();
         this.getInvestments(this.selectedInvestmentId == this.deleteInvestmentId ? true : false);
       },
-      error: (errorResponse) => {
+      error: (errorResponse: HttpErrorResponse) => {
+        this._toastr.error(errorResponse.error.title);
+      }
+    });
+  }
+
+  openCreateTransactionPopup(modalContent: TemplateRef<any>): void {
+    this.transactionModel = {
+      amount: 0,
+      transactionDate: new Date()
+    };
+
+    this.openModal(modalContent);
+  }
+
+  saveTransaction(): void {
+    this._http.post<void>(`${environment.apiUrl}/investments/${this.selectedInvestmentId}/transactions`, this.transactionModel).subscribe({
+      next: () => {
+        this._modalService.dismissAll();
+        this.getInvestments(false);
+        this.getTransactions();
+      },
+      error: (errorResponse: HttpErrorResponse) => {
         this._toastr.error(errorResponse.error.title);
       }
     });
