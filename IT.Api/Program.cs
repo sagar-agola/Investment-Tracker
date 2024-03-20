@@ -2,6 +2,7 @@ using IT.Api.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace IT.Api;
 
@@ -18,6 +19,15 @@ public class Program
 
         builder.Services.AddTransient<DatabaseHelpers>();
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy($"DevelopmentCorsPolicy", builder => builder
+                .WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+        });
+
         WebApplication app = builder.Build();
 
         if (app.Environment.IsDevelopment())
@@ -25,6 +35,8 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.UseCors($"{builder.Environment.EnvironmentName}CorsPolicy");
 
         app.UseHttpsRedirection();
         app.MapControllers();
