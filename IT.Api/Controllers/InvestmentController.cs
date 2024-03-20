@@ -90,4 +90,49 @@ GROUP BY [i].[Id],
 
         return Ok();
     }
+
+    [HttpGet("api/investments/{investmentId:int}/transactions")]
+    public async Task<IActionResult> GetTransactions([FromRoute] int investmentId, CancellationToken cancellationToken)
+    {
+        string connectionString = databaseHelpers.GetDefaultConnection();
+        string query = @"
+WITH [cte]
+AS (SELECT [Id],
+           [CreatedAt] AS [TransactionDate],
+           [Amount],
+           DATEDIFF(MONTH, [CreatedAt], GETUTCDATE()) AS Months
+    FROM [dbo].[Transactions]
+    WHERE [InvestmentId] = @InvestmentId
+   )
+SELECT [Id],
+       [TransactionDate],
+       [Amount],
+       CAST([Months] * [Amount] * 0.015 AS INT) AS Interest150,
+       CAST([Months] * [Amount] * 0.0125 AS INT) AS Interest125,
+       CAST([Months] * [Amount] * 0.01 AS INT) AS Interest100
+FROM [cte]"
+        ;
+
+        using SqlConnection connection = new(connectionString);
+
+        await connection.OpenAsync(cancellationToken);
+
+        IEnumerable<TransactionGridModel> investments = await connection.QueryAsync<TransactionGridModel>(query, new { investmentId });
+
+        return Ok(investments);
+    }
+
+    [HttpPost("api/investments/{investmentId:int}/transactions")]
+    public async Task<IActionResult> AddTransaction([FromRoute] int investmentId, [FromQuery] int amount, [FromQuery] DateTime transactionDate)
+    {
+        string connectionString = databaseHelpers.GetDefaultConnection();
+        string query = "INSERT INTO [dbo].[Transactions] ([Amount], [CreatedAt], [InvestmentId]) VALUES (@amount, @transactionDate, @investmentId)";
+
+        using SqlConnection connection = new(connectionString);
+
+        await connection.OpenAsync();
+        await connection.ExecuteAsync(query, new { amount, transactionDate, investmentId });
+
+        return Ok();
+    }
 }
