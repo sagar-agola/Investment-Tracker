@@ -1,0 +1,30 @@
+-- Date: 20/03/2024 >> Initial Database Creation
+CREATE DATABASE [InvestmentTracker]
+
+CREATE TABLE [dbo].[Investments]
+(
+	[Id] INT IDENTITY(1, 1) NOT NULL,
+	[Title] VARCHAR(200) NOT NULL,
+
+	CONSTRAINT [PK_Investments] PRIMARY KEY CLUSTERED
+	(
+		[Id] ASC
+	) WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+) ON [PRIMARY]
+
+CREATE TABLE [dbo].[Transactions]
+(
+	[Id] INT IDENTITY(1, 1) NOT NULL,
+	[Amount] INT NOT NULL,
+	[CreatedAt] DATETIME2 NOT NULL,
+	[InvestmentId] INT NOT NULL,
+
+	CONSTRAINT [PK_Transactions] PRIMARY KEY CLUSTERED
+	(
+		[Id] ASC
+	) WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
+
+	CONSTRAINT [FK_Transactions_Investments] FOREIGN KEY ([InvestmentId]) REFERENCES [Investments]([Id])
+) ON [PRIMARY]
+
+CREATE INDEX [IX_InvestmentId] ON [Transactions]([InvestmentId])

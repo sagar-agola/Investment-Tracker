@@ -1,3 +1,4 @@
+using IT.Api.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +15,8 @@ public class Program
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddTransient<DatabaseHelpers>();
 
         WebApplication app = builder.Build();
 
