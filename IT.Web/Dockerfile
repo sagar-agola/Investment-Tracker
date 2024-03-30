@@ -21,6 +21,10 @@ COPY --from=build-step /app/dist/it.web/browser /data/www/
 COPY /nginx/customconfig.conf /etc/nginx/conf.d/customconfig.conf
 COPY /nginx/nginx.conf /etc/nginx/nginx.conf
 
+# copy ssl certificate
+COPY /nginx/ssl/investments-tracker.com.crt /etc/nginx/investments-tracker.com.crt
+COPY /nginx/ssl/investments-tracker.com.key /etc/nginx/investments-tracker.com.key
+
 RUN chmod -R 755 /data/www
 
 EXPOSE 80
