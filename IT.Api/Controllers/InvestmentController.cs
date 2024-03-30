@@ -108,9 +108,9 @@ AS (SELECT [Id],
 SELECT [Id],
        [TransactionDate],
        [Amount],
-       CAST([Months] * [Amount] * 0.015 AS INT) AS Interest150,
-       CAST([Months] * [Amount] * 0.0125 AS INT) AS Interest125,
-       CAST([Months] * [Amount] * 0.01 AS INT) AS Interest100
+       CAST([Months] * [Amount] * 0.015 AS DECIMAL(18, 0)) AS Interest150,
+       CAST([Months] * [Amount] * 0.0125 AS DECIMAL(18, 0)) AS Interest125,
+       CAST([Months] * [Amount] * 0.01 AS DECIMAL(18, 0)) AS Interest100
 FROM [cte]
 ORDER BY [TransactionDate]";
 
